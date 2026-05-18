@@ -48,3 +48,4 @@ let estadoInicial = {
     ColisionAlien = 0
     ColisionEnemigo = 0
 }
+
