@@ -1,4 +1,4 @@
-module App.Game
+module App.Alien
 open System
 open System.Threading
 open App.Types
@@ -25,4 +25,3 @@ let drawGame = [|
     drawMisiles
 |]
 let drawGameLoop = createRedrawScreen drawGame (fun s -> s.RedrawScreen) (fun s -> { s with RedrawScreen = false })
-

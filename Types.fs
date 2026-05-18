@@ -9,11 +9,40 @@ type SpriteState =
 | Alive
 | Hit
 
+type Menu =
+| Active
+| Inactive
+
 type Misil = {
     X: int
     Y: int
 }
 
+
+type Command =
+| NewGame
+| LoadGame
+| Exit
+
+
+type MenuState = {
+    Menu: Menu
+    X: int; Y: int
+    CurSorSelection: int
+    CursorX: int
+    Commands: (Command * string) array
+    RedrawScreen: bool
+}
+
+let initialMenuState = {
+    Menu = Active
+    X = Console.BufferWidth/2 - 5
+    Y = Console.BufferHeight/2 - 1
+    CurSorSelection = 0
+    CursorX = Console.BufferWidth/2 - 7
+    Commands = [| (NewGame, "New Game"); (LoadGame, "Load Game"); (Exit, "Exit") |]
+    RedrawScreen = true
+}
 
 type State = {
     ProgramState: ProgramState
@@ -32,7 +61,7 @@ type State = {
     ColisionEnemigo: int
 }
 
-let estadoInicial = {
+let initialState = {
     ProgramState = Running
     AlienX = Console.BufferWidth/2
     AlienY = Console.BufferHeight/2
