@@ -29,12 +29,12 @@ let drawMenuLoop = createRedrawScreen [| drawMenu |] (fun s -> s.RedrawScreen) (
 
 let pipeline = [| processKeyboard; drawMenuLoop |]
 
-let miLoop  (state:'state) = createMainLoop pipeline (fun s -> s.Menu = Active)
+let miLoop  = createMainLoop pipeline (fun s -> s.Menu = Active)
 
 let mostrar() =
     let oldForeground = System.Console.ForegroundColor
     System.Console.CursorVisible <- false
-    let state = initialState |> miLoop
+    let state = initialMenuState |> miLoop
     System.Console.CursorVisible <- true
     System.Console.ForegroundColor <- oldForeground
     System.Console.Clear()
