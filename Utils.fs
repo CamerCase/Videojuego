@@ -34,10 +34,12 @@ let createProcessKeyboard (handleKey: ConsoleKeyInfo -> 'state -> 'state) state 
     else
         state
 
-let createRedrawScreen (drawFn: 'state -> 'state) (getRedraw: 'state -> bool) (setRedrawn: 'state -> 'state) state =
+let createRedrawScreen (drawFn: ('state -> 'state) array) (getRedraw: 'state -> bool) (setRedrawn: 'state -> 'state) state =
     if getRedraw state then
         Console.Clear()
-        state |> drawFn |> setRedrawn
+        drawFn 
+        |> Array.fold (fun acc f -> f acc) state
+        |> setRedrawn
     else
         state
 
