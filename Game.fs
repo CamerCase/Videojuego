@@ -37,10 +37,11 @@ let detectarColisionConPlayer state =
     |> fun nuevosMisiles ->
         if nuevosMisiles.Length <> state.MisilesEnemigos.Length then 
             {state with 
-                PlayerState=Hit
-                MisilesEnemigos=nuevosMisiles
-                RedrawScreen=true
-                EnemyShootCooldown=0
+                PlayerState = Hit
+                MisilesEnemigos = nuevosMisiles
+                Lives = state.Lives - 1
+                Screen = if state.Lives - 1 <= 0 then GameOverScreen else state.Screen
+                RedrawScreen = true 
             }
         else
             state
@@ -61,17 +62,14 @@ let detectarColisionConEnemigo state =
                 EnemyState=Hit
                 Misiles=nuevosMisiles
                 RedrawScreen=true
-                EnemyRespawnTick=state.Tick
+                EnemyRespawnTick = 160          // cuenta regresiva de 160 ticks
+                Score = state.Score + 1   
             }
         else
             state
 let resetEnemy state =
-    if state.EnemyState = Hit then 
-        let tiempo = state.Tick-state.EnemyRespawnTick
-        if tiempo >= 160 then 
-            {state with EnemyState=Alive;RedrawScreen=true}
-        else
-            state
+    if state.EnemyState = Hit && state.EnemyRespawnTick = 0 then
+        { state with EnemyState = Alive; RedrawScreen = true }
     else
         state
 
