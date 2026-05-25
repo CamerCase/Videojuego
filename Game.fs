@@ -18,6 +18,32 @@ let drawMisiles state =
     |> List.iter (fun misil -> displayMessage misil.X misil.Y ConsoleColor.Cyan "=>")
     state
 
+let actualizarMisiles state =
+    if state.Misiles <> [] then 
+        state.Misiles
+        |> Seq.map (fun misil -> {misil with X=misil.X+1})
+        |> Seq.filter (fun misil -> misil.X < Console.BufferWidth-2)
+        |> Seq.toList
+        |> fun nuevosMisiles ->
+            {state with Misiles = nuevosMisiles;RedrawScreen=true} 
+    else
+        state
+
+
+
+let detectarColisionConAlien state =
+    state.MisilesEnemigos
+    |> List.filter (fun misil -> not (misil.X = state.AlienX+1 && misil.Y = state.AlienY))
+    |> fun nuevosMisiles ->
+        if nuevosMisiles.Length <> state.MisilesEnemigos.Length then 
+            {state with 
+                PlayerState=Hit
+                MisilesEnemigos=nuevosMisiles
+                RedrawScreen=true
+                PlayerCooldownTick=state.Tick
+            }
+        else
+            state
 let drawEnemy state =
     match state.EnemyState with
     | Alive -> displayMessage state.EnemyX state.EnemyY ConsoleColor.Yellow "👾"
@@ -25,10 +51,55 @@ let drawEnemy state =
     | Dead -> displayMessage state.EnemyX state.EnemyY ConsoleColor.DarkRed ""
     state
 
+
+let detectarColisionConEnemigo state =
+    state.Misiles
+    |> List.filter (fun misil -> not (misil.X = state.EnemyX-1 && misil.Y = state.EnemyY))
+    |> fun nuevosMisiles ->
+        if nuevosMisiles.Length <> state.Misiles.Length then 
+            {state with 
+                EnemyState=Hit
+                Misiles=nuevosMisiles
+                RedrawScreen=true
+                EnemyCooldownTick=state.Tick
+            }
+        else
+            state
+let resetEnemy state =
+    if state.EnemyState = Hit then 
+        let tiempo = state.Tick-state.EnemyCooldownTick
+        if tiempo >= 160 then 
+            {state with EnemyState=Alive;RedrawScreen=true}
+        else
+            state
+    else
+        state
+
 let drawMisilesEnemigos state =
     state.MisilesEnemigos
     |> List.iter (fun misil -> displayMessage misil.X misil.Y ConsoleColor.Red "<=")
     state
+
+let actualizarMisilesEnemigos state =
+    if state.MisilesEnemigos <> [] then 
+        state.MisilesEnemigos
+        |> Seq.map (fun misil -> {misil with X=misil.X-1})
+        |> Seq.filter (fun misil -> misil.X >= 0)
+        |> Seq.toList
+        |> fun nuevosMisiles ->
+            {state with MisilesEnemigos = nuevosMisiles;RedrawScreen=true} 
+    else
+        state
+
+let actualizarDisparoEnemigo state =
+    if state.EnemyState = Alive && state.Tick % 10 = 0 then 
+        let nuevoMisil = {
+            X = state.EnemyX-2
+            Y = state.EnemyY
+        }
+        {state with MisilesEnemigos= nuevoMisil :: state.MisilesEnemigos; RedrawScreen=true}
+    else
+        state
 
 
 let procesarTecladoAlien key state =
