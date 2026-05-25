@@ -1,9 +1,6 @@
 module App.Types
 open System
 
-type ProgramState =
-| Running
-| Terminated
 
 type SpriteState =
 | Alive
@@ -32,6 +29,7 @@ type Command =
 | Exit
 
 
+
 type MenuState = {
     Menu: Menu
     X: int; Y: int
@@ -52,7 +50,6 @@ let initialMenuState = {
 }
 
 type State = {
-    ProgramState: ProgramState
     PlayerX: int
     PlayerY: int
     PlayerState: SpriteState
@@ -64,15 +61,15 @@ type State = {
     EnemyDir: int
     EnemyState: SpriteState
     MisilesEnemigos: Misil list
-    ColisionAlien: int
-    ColisionEnemigo: int
-    Lives : int
-    Score : int
+    PlayerShootCooldown: int   
+    EnemyShootCooldown:  int   
+    EnemyRespawnTick:    int   
     Screen: MenuScreen
+    Score: int
+    Lives: int
 }
 
 let initialState = {
-    ProgramState = Running
     PlayerX = Console.BufferWidth/2
     PlayerY = Console.BufferHeight/2
     PlayerState = Alive
@@ -84,9 +81,10 @@ let initialState = {
     EnemyDir = 1
     EnemyState = Alive
     MisilesEnemigos = []
-    ColisionAlien = 0
-    ColisionEnemigo = 0
-    Lives = 3
-    Score = 0
+    PlayerShootCooldown = 0
+    EnemyShootCooldown = 0
+    EnemyRespawnTick = 0
     Screen = MainMenu
+    Score = 0
+    Lives = 3
 }
