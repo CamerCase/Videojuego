@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Types.fs" /><Compile Include="Utils.fs" /><Compile Include="Save.fs" /><Compile Include="Alien.fs" /><Compile Include="Enemy.fs" /><Compile Include="Router.fs" /><Compile Include="Menu.fs" />
+    <Compile Include="Types.fs" /><Compile Include="Utils.fs" /><Compile Include="Save.fs" /><Compile Include="Game.fs" /><Compile Include="Router.fs" /><Compile Include="Menu.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
