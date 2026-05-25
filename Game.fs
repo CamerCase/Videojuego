@@ -35,11 +35,11 @@ let procesarTecladoAlien key state =
     if state.PlayerState = Alive then 
         match key with 
         | ConsoleKey.Spacebar ->
-            let nuevoMisil = {
-                X = state.PlayerX+2
-                Y = state.PlayerY
-            }
-            {state with Misiles = nuevoMisil :: state.Misiles}
+            if state.PlayerShootCooldown = 0 then  // ← agregar esto
+                let nuevoMisil = { X = state.PlayerX + 2; Y = state.PlayerY }
+                { state with Misiles = nuevoMisil :: state.Misiles;PlayerShootCooldown = 8 }  // ← y esto
+            else
+                state
         | ConsoleKey.UpArrow ->
             {state with PlayerY = max 0 (state.PlayerY-1)}
         | ConsoleKey.DownArrow ->
