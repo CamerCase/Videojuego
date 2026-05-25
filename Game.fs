@@ -31,6 +31,32 @@ let drawMisilesEnemigos state =
     state
 
 
+let procesarTecladoAlien key state =
+    if state.PlayerState = Alive then 
+        match key with 
+        | ConsoleKey.Spacebar ->
+            let nuevoMisil = {
+                X = state.PlayerX+2
+                Y = state.PlayerY
+            }
+            {state with Misiles = nuevoMisil :: state.Misiles}
+        | ConsoleKey.UpArrow ->
+            {state with PlayerY = max 0 (state.PlayerY-1)}
+        | ConsoleKey.DownArrow ->
+            {state with PlayerY = min (Console.BufferHeight-1) (state.PlayerY+1)}
+        | ConsoleKey.LeftArrow ->
+            {state with PlayerX = max 0 (state.PlayerX-1)}
+        | ConsoleKey.RightArrow ->
+            {state with PlayerX = min (Console.BufferWidth-2) (state.PlayerX+1)}
+        | _ -> state
+        |> fun nuevoEstado ->
+            if nuevoEstado <> state then 
+                {nuevoEstado with RedrawScreen=true}
+            else
+                state
+    else
+        state
+
 
 
 let drawGame = [|
