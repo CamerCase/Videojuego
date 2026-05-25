@@ -15,7 +15,7 @@ let updateMenuKeyboard key state =
         match key with 
         | ConsoleKey.UpArrow   -> {state with CurSorSelection = max 0 (state.CurSorSelection-1)}
         | ConsoleKey.DownArrow -> {state with CurSorSelection = min (state.Commands.Length-1) (state.CurSorSelection+1)}
-        | ConsoleKey.Escape     -> {state with Menu = Inactive}
+        | ConsoleKey.Enter     -> {state with Menu = Inactive}
         | _ -> state
     if newState <> state then {newState with RedrawScreen = true}
     else state

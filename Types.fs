@@ -22,13 +22,15 @@ type Misil = {
     Y: int
 }
 
+type SaveData = {
+    Score: int
+    Lives: int
+}
 
 type Command =
 | NewGame
 | LoadGame
 | Exit
-
-
 
 type MenuState = {
     Menu: Menu
