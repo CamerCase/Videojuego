@@ -31,16 +31,16 @@ let actualizarMisiles state =
 
 
 
-let detectarColisionConAlien state =
+let detectarColisionConPlayer state =
     state.MisilesEnemigos
-    |> List.filter (fun misil -> not (misil.X = state.AlienX+1 && misil.Y = state.AlienY))
+    |> List.filter (fun misil -> not (misil.X = state.PlayerX+1 && misil.Y = state.PlayerY))
     |> fun nuevosMisiles ->
         if nuevosMisiles.Length <> state.MisilesEnemigos.Length then 
             {state with 
                 PlayerState=Hit
                 MisilesEnemigos=nuevosMisiles
                 RedrawScreen=true
-                PlayerCooldownTick=state.Tick
+                EnemyShootCooldown=0
             }
         else
             state
@@ -61,13 +61,13 @@ let detectarColisionConEnemigo state =
                 EnemyState=Hit
                 Misiles=nuevosMisiles
                 RedrawScreen=true
-                EnemyCooldownTick=state.Tick
+                EnemyRespawnTick=state.Tick
             }
         else
             state
 let resetEnemy state =
     if state.EnemyState = Hit then 
-        let tiempo = state.Tick-state.EnemyCooldownTick
+        let tiempo = state.Tick-state.EnemyRespawnTick
         if tiempo >= 160 then 
             {state with EnemyState=Alive;RedrawScreen=true}
         else
@@ -101,6 +101,10 @@ let actualizarDisparoEnemigo state =
     else
         state
 
+let descontarCooldowns state =
+    { state with
+        PlayerShootCooldown = max 0 (state.PlayerShootCooldown - 1)
+        EnemyRespawnTick    = max 0 (state.EnemyRespawnTick - 1) }
 
 let procesarTecladoAlien key state =
     if state.PlayerState = Alive then 
