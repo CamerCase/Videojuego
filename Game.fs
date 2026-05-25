@@ -9,8 +9,9 @@ let updateTick =
 
 let drawAlien state =
     match state.AlienState with
-    | Alive -> displayMessage state.AlienX state.AlienY ConsoleColor.Green "🤖"
-    | Hit -> displayMessage state.AlienX state.AlienY ConsoleColor.Red "💥"
+    | Alive -> displayMessage state.PlayerX state.PlayerY ConsoleColor.Green "🤖"
+    | Hit -> displayMessage state.PlayerX state.PlayerY ConsoleColor.Red "💥"
+    | Dead -> displayMessage state.PlayerX state.PlayerY ConsoleColor.DarkRed ""
     state
 let drawMisiles state =
     state.Misiles
@@ -21,6 +22,7 @@ let drawEnemy state =
     match state.EnemyState with
     | Alive -> displayMessage state.EnemyX state.EnemyY ConsoleColor.Yellow "👾"
     | Hit -> displayMessage state.EnemyX state.EnemyY ConsoleColor.Red "💥"
+    | Dead -> displayMessage state.EnemyX state.EnemyY ConsoleColor.DarkRed ""
     state
 
 let drawMisilesEnemigos state =
