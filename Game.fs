@@ -58,7 +58,8 @@ let procesarTecladoAlien key state =
         state
 
 
-
+let processKeyboard =
+    createProcessKeyboard (fun k state -> procesarTecladoAlien k.Key state)
 let drawGame = [|
     drawAlien
     drawMisiles
