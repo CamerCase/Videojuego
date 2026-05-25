@@ -55,7 +55,7 @@ type State = {
     ProgramState: ProgramState
     PlayerX: int
     PlayerY: int
-    AlienState: SpriteState
+    PlayerState: SpriteState
     RedrawScreen: bool
     Tick: int
     Misiles: Misil list
@@ -75,7 +75,7 @@ let initialState = {
     ProgramState = Running
     PlayerX = Console.BufferWidth/2
     PlayerY = Console.BufferHeight/2
-    AlienState = Alive
+    PlayerState = Alive
     RedrawScreen = true
     Tick = -1
     Misiles = []
@@ -88,6 +88,5 @@ let initialState = {
     ColisionEnemigo = 0
     Lives = 3
     Score = 0
-    Screen = GameScreen
+    Screen = MainMenu
 }
-

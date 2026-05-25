@@ -8,7 +8,7 @@ let updateTick =
     createUpdateTick (fun s -> s.Tick) (fun t s -> {s with Tick = t})
 
 let drawAlien state =
-    match state.AlienState with
+    match state.PlayerState with
     | Alive -> displayMessage state.PlayerX state.PlayerY ConsoleColor.Green "🤖"
     | Hit -> displayMessage state.PlayerX state.PlayerY ConsoleColor.Red "💥"
     | Dead -> displayMessage state.PlayerX state.PlayerY ConsoleColor.DarkRed ""
