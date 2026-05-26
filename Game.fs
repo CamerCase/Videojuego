@@ -135,8 +135,17 @@ let processKeyboard =
     createProcessKeyboard (fun k state -> procesarTecladoAlien k.Key state)
 let drawGame = [|
     drawAlien
-    drawMisiles
     drawEnemy
+    processKeyboard
+    updateTick
+    drawMisiles
     drawMisilesEnemigos
+    actualizarMisiles
+    actualizarMisilesEnemigos
+    actualizarDisparoEnemigo
+    descontarCooldowns
+    detectarColisionConEnemigo
+    detectarColisionConPlayer
+    resetEnemy
 |]
 let drawGameLoop = createRedrawScreen drawGame (fun s -> s.RedrawScreen) (fun s -> { s with RedrawScreen = false })

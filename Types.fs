@@ -32,6 +32,9 @@ type Command =
 | LoadGame
 | Exit
 
+type CommandResult =
+| ReturnToMenu
+
 type MenuState = {
     Menu: Menu
     X: int; Y: int
