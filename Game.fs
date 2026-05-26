@@ -32,18 +32,20 @@ let actualizarMisiles state =
 
 
 let detectarColisionConEnemigo state =
-    state.Misiles
-    |> List.filter (fun misil -> not (misil.X = state.EnemyX-1 && misil.Y = state.EnemyY))
-    |> fun nuevosMisiles ->
-        if nuevosMisiles.Length <> state.Misiles.Length then 
-            { state with 
-                EnemyState       = Hit
-                Misiles          = nuevosMisiles
-                RedrawScreen     = true
-                EnemyRespawnTick = 160
-                Score            = state.Score + 1 }
-        else
-            state
+    if state.EnemyState <> Alive then state  // ← si ya está Hit, no detectar
+    else
+        state.Misiles
+        |> List.filter (fun misil -> not (misil.X = state.EnemyX-1 && misil.Y = state.EnemyY))
+        |> fun nuevosMisiles ->
+            if nuevosMisiles.Length <> state.Misiles.Length then 
+                { state with 
+                    EnemyState       = Hit
+                    Misiles          = nuevosMisiles
+                    RedrawScreen     = true
+                    EnemyRespawnTick = 160
+                    Score            = state.Score + 1 }
+            else
+                state
 let drawEnemy state =
     match state.EnemyState with
     | Alive -> displayMessage state.EnemyX state.EnemyY ConsoleColor.Yellow "👾"
@@ -115,27 +117,21 @@ let descontarCooldowns state =
 
 let procesarTecladoAlien key state =
     if state.PlayerState = Alive then 
-        match key with 
+        match key with
+        | ConsoleKey.Escape -> { state with Screen = PauseMenu }  // ← nuevo
         | ConsoleKey.Spacebar ->
-            if state.PlayerShootCooldown = 0 then  // ← agregar esto
+            if state.PlayerShootCooldown = 0 then
                 let nuevoMisil = { X = state.PlayerX + 2; Y = state.PlayerY }
-                { state with Misiles = nuevoMisil :: state.Misiles;PlayerShootCooldown = 8 }  // ← y esto
-            else
-                state
-        | ConsoleKey.UpArrow ->
-            {state with PlayerY = max 0 (state.PlayerY-1)}
-        | ConsoleKey.DownArrow ->
-            {state with PlayerY = min (Console.BufferHeight-1) (state.PlayerY+1)}
-        | ConsoleKey.LeftArrow ->
-            {state with PlayerX = max 0 (state.PlayerX-1)}
-        | ConsoleKey.RightArrow ->
-            {state with PlayerX = min (Console.BufferWidth-2) (state.PlayerX+1)}
+                { state with Misiles = nuevoMisil :: state.Misiles; PlayerShootCooldown = 8 }
+            else state
+        | ConsoleKey.UpArrow    -> { state with PlayerY = max 0 (state.PlayerY-1) }
+        | ConsoleKey.DownArrow  -> { state with PlayerY = min (Console.BufferHeight-1) (state.PlayerY+1) }
+        | ConsoleKey.LeftArrow  -> { state with PlayerX = max 0 (state.PlayerX-1) }
+        | ConsoleKey.RightArrow -> { state with PlayerX = min (Console.BufferWidth-2) (state.PlayerX+1) }
         | _ -> state
         |> fun nuevoEstado ->
-            if nuevoEstado <> state then 
-                {nuevoEstado with RedrawScreen=true}
-            else
-                state
+            if nuevoEstado <> state then { nuevoEstado with RedrawScreen = true }
+            else state
     else
         state
 
@@ -169,9 +165,9 @@ let gamePipeline = [|
     actualizarMisilesEnemigos    // 5. mover misiles del enemigo
     actualizarDisparoEnemigo     // 6. el enemigo dispara si toca
     detectarColisionConEnemigo   // 7. ¿misil del jugador golpeó al enemigo?
-    detectarColisionConPlayer
-    resetPlayer                  // 8. ¿misil enemigo golpeó al jugador?
-    resetEnemy                   // 9. ¿el enemigo debe respawnear?
+    detectarColisionConPlayer                 // 8. ¿misil enemigo golpeó al jugador?
+    resetEnemy  
+    resetPlayer                  // 9. ¿el enemigo debe respawnear?
     drawGameLoop                 // 10. dibujar SOLO si hubo cambios
 |]
 

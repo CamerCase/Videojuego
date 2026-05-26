@@ -58,4 +58,19 @@ let mostrarGameOver score =
     // Reutiliza el mismo loop del menú
     let resultado = state |> miLoop
     Console.Clear()
-    resultado.Commands.[0] |> fst  // devuelve NewGame siempre
+    resultado.Commands.[0] |> fst
+
+let mostrarPausa () =
+    Console.CursorVisible <- false
+    let state = {
+        initialMenuState with
+            Commands = [| 
+                (NewGame, "Continuar")   // reutilizamos NewGame como "continuar"
+                (Exit,    "Guardar y salir al menu") 
+            |]
+            CurSorSelection = 0
+            RedrawScreen = true
+    }
+    let resultado = state |> miLoop
+    Console.Clear()
+    resultado.Commands.[resultado.CurSorSelection] |> fst

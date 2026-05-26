@@ -21,6 +21,12 @@ let route (state: State) : State =
         App.Menu.mostrarGameOver state.Score |> ignore  // ← aquí, no en GameScreen
         { initialState with Screen = MainMenu }
 
-    | PauseMenu -> state
+    | PauseMenu ->
+        match App.Menu.mostrarPausa() with
+        | NewGame -> { state with Screen = GameScreen; RedrawScreen = true }  // continuar
+        | Exit    ->
+            App.Save.guardar state
+            { initialState with Screen = MainMenu }
+        | _ -> state
 let rec routerLoop state =
     state |> route |> routerLoop
