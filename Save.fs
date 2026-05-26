@@ -4,8 +4,11 @@ open System.IO
 open System.Text.Json
 open App.Types
 
-let private savePath = "save.json"
 
+let private savePath = "save.json"
+let borrar () : unit =
+    if File.Exists(savePath) then
+        File.Delete(savePath)
 // State -> SaveData (extrae solo lo que se guarda)
 let private toSaveData (state: State) : SaveData =
     { Score = state.Score; Lives = state.Lives }

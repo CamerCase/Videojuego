@@ -21,7 +21,8 @@ let route (state: State) : State =
         result                                    // ← sale cuando Screen cambia a GameOverScreen
 
     | GameOverScreen ->
-        App.Menu.mostrarGameOver state.Score |> ignore  // ← aquí, no en GameScreen
+        App.Save.borrar()                              // ← borra el save
+        App.Menu.mostrarGameOver state.Score |> ignore
         { initialState with Screen = MainMenu }
 
     | PauseMenu ->
