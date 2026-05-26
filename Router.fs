@@ -8,7 +8,10 @@ let route (state: State) : State =
         let comando = App.Menu.mostrar()
         match comando with
         | NewGame  -> { initialState with Screen = GameScreen }
-        | LoadGame -> state
+        | LoadGame ->
+            match App.Save.cargar initialState with
+            | Some s -> { s with Screen = GameScreen }
+            | None   -> { initialState with Screen = GameScreen }
         | Exit     -> Environment.Exit(0); state
 
     | GameScreen ->
