@@ -11,7 +11,10 @@ let route (state: State) : State =
         | NewGame  -> { state with Screen = GameScreen }
         | LoadGame -> state  // por ahora placeholder
         | Exit     -> Environment.Exit(0); state
-
-    | GameScreen     -> state  // placeholder
+    | GameScreen     -> 
+        initialState |> App.Game.gameLoop// placeholder
     | PauseMenu      -> state  // placeholder
     | GameOverScreen -> state  // placeholder
+
+let rec routerLoop state =
+    state |> route |> routerLoop

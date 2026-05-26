@@ -3,6 +3,7 @@ open System
 open App.Types
 open App.Utils
 open App.Menu
+open App.Router
 
 let estadoPrueba = { initialState with Score = 5; Lives = 2 }
 App.Save.guardar estadoPrueba
@@ -13,4 +14,4 @@ match App.Save.cargar initialState with
 | Some s -> printfn "Cargado: Score=%d Lives=%d" s.Score s.Lives
 | None   -> printfn "No hay guardado"
 
-mostrar() |> ignore
+App.Router.routerLoop initialState

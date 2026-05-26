@@ -134,18 +134,23 @@ let procesarTecladoAlien key state =
 let processKeyboard =
     createProcessKeyboard (fun k state -> procesarTecladoAlien k.Key state)
 let drawGame = [|
-    drawAlien
-    drawEnemy
-    processKeyboard
-    updateTick
-    drawMisiles
-    drawMisilesEnemigos
-    actualizarMisiles
-    actualizarMisilesEnemigos
-    actualizarDisparoEnemigo
-    descontarCooldowns
-    detectarColisionConEnemigo
-    detectarColisionConPlayer
-    resetEnemy
+    drawAlien; drawEnemy; drawMisiles; drawMisilesEnemigos
 |]
 let drawGameLoop = createRedrawScreen drawGame (fun s -> s.RedrawScreen) (fun s -> { s with RedrawScreen = false })
+
+let gamePipeline = [|
+    updateTick                   // 1. avanzar el reloj
+    processKeyboard              // 2. leer input del jugador
+    descontarCooldowns           // 3. bajar timers (cooldown, respawn)
+    actualizarMisiles            // 4. mover misiles del jugador
+    actualizarMisilesEnemigos    // 5. mover misiles del enemigo
+    actualizarDisparoEnemigo     // 6. el enemigo dispara si toca
+    detectarColisionConEnemigo   // 7. ¿misil del jugador golpeó al enemigo?
+    detectarColisionConPlayer    // 8. ¿misil enemigo golpeó al jugador?
+    resetEnemy                   // 9. ¿el enemigo debe respawnear?
+    drawGameLoop                 // 10. dibujar SOLO si hubo cambios
+|]
+
+let gameLoop =
+    createMainLoop gamePipeline (fun s -> s.Screen = GameScreen)
+
