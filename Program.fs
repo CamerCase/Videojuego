@@ -1,9 +1,6 @@
 ﻿module App.Program
 open System 
 open App.Types
-open App.Utils
-open App.Menu
-open App.Router
 
 let estadoPrueba = { initialState with Score = 5; Lives = 2 }
 App.Save.guardar estadoPrueba

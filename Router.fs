@@ -2,22 +2,25 @@ module App.Router
 open System
 open App.Types
 open App.Utils
-open App.Menu
 let route (state: State) : State =
     match state.Screen with
     | MainMenu ->
         let comando = App.Menu.mostrar()
         match comando with
-        | NewGame  -> { state with Screen = GameScreen }
-        | LoadGame -> state  // por ahora placeholder
+        | NewGame  -> { initialState with Screen = GameScreen }
+        | LoadGame -> state
         | Exit     -> Environment.Exit(0); state
-    | GameScreen     -> 
+
+    | GameScreen ->
         Console.CursorVisible <- false
         let result = state |> App.Game.gameLoop
         Console.CursorVisible <- true
-        result
-    | PauseMenu      -> state  // placeholder
-    | GameOverScreen -> state  // placeholder
+        result                                    // ← sale cuando Screen cambia a GameOverScreen
 
+    | GameOverScreen ->
+        App.Menu.mostrarGameOver state.Score |> ignore  // ← aquí, no en GameScreen
+        { initialState with Screen = MainMenu }
+
+    | PauseMenu -> state
 let rec routerLoop state =
     state |> route |> routerLoop

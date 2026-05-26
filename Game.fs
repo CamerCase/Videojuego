@@ -31,18 +31,17 @@ let actualizarMisiles state =
 
 
 
-let detectarColisionConPlayer state =
-    state.MisilesEnemigos
-    |> List.filter (fun misil -> not (misil.X = state.PlayerX+1 && misil.Y = state.PlayerY))
+let detectarColisionConEnemigo state =
+    state.Misiles
+    |> List.filter (fun misil -> not (misil.X = state.EnemyX-1 && misil.Y = state.EnemyY))
     |> fun nuevosMisiles ->
-        if nuevosMisiles.Length <> state.MisilesEnemigos.Length then 
-            {state with 
-                PlayerState = Hit
-                MisilesEnemigos = nuevosMisiles
-                Lives = state.Lives - 1
-                Screen = if state.Lives - 1 <= 0 then GameOverScreen else state.Screen
-                RedrawScreen = true 
-            }
+        if nuevosMisiles.Length <> state.Misiles.Length then 
+            { state with 
+                EnemyState       = Hit
+                Misiles          = nuevosMisiles
+                RedrawScreen     = true
+                EnemyRespawnTick = 160
+                Score            = state.Score + 1 }
         else
             state
 let drawEnemy state =
@@ -53,23 +52,26 @@ let drawEnemy state =
     state
 
 
-let detectarColisionConEnemigo state =
-    state.Misiles
-    |> List.filter (fun misil -> not (misil.X = state.EnemyX-1 && misil.Y = state.EnemyY))
+// Cambia esto en detectarColisionConPlayer:
+let detectarColisionConPlayer state =
+    state.MisilesEnemigos
+    |> List.filter (fun misil -> not (misil.X = state.PlayerX+1 && misil.Y = state.PlayerY))
     |> fun nuevosMisiles ->
-        if nuevosMisiles.Length <> state.Misiles.Length then 
-            {state with 
-                EnemyState=Hit
-                Misiles=nuevosMisiles
-                RedrawScreen=true
-                EnemyRespawnTick = 160          // cuenta regresiva de 160 ticks
-                Score = state.Score + 1   
-            }
+        if nuevosMisiles.Length <> state.MisilesEnemigos.Length then
+            let nuevasVidas = state.Lives - 1
+            { state with
+                PlayerState       = Hit
+                MisilesEnemigos   = nuevosMisiles
+                Lives             = nuevasVidas
+                PlayerRespawnTick = 80   // ← pausa antes de revivir
+                Screen            = if nuevasVidas <= 0 then GameOverScreen else state.Screen
+                RedrawScreen      = true }
         else
             state
 
+// Y resetPlayer con el tick:
 let resetPlayer state =
-    if state.PlayerState = Hit && state.Lives > 0 then
+    if state.PlayerState = Hit && state.PlayerRespawnTick = 0 && state.Lives > 0 then
         { state with PlayerState = Alive; RedrawScreen = true }
     else
         state
@@ -108,7 +110,8 @@ let actualizarDisparoEnemigo state =
 let descontarCooldowns state =
     { state with
         PlayerShootCooldown = max 0 (state.PlayerShootCooldown - 1)
-        EnemyRespawnTick    = max 0 (state.EnemyRespawnTick - 1) }
+        EnemyRespawnTick    = max 0 (state.EnemyRespawnTick - 1)
+        PlayerRespawnTick   = max 0 (state.PlayerRespawnTick - 1) }  // ← nuevo
 
 let procesarTecladoAlien key state =
     if state.PlayerState = Alive then 

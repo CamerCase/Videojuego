@@ -72,6 +72,7 @@ type State = {
     Screen: MenuScreen
     Score: int
     Lives: int
+    PlayerRespawnTick: int
 }
 
 let initialState = {
@@ -92,4 +93,5 @@ let initialState = {
     Screen = MainMenu
     Score = 0
     Lives = 3
+    PlayerRespawnTick = 0
 }
