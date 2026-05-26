@@ -12,7 +12,10 @@ let route (state: State) : State =
         | LoadGame -> state  // por ahora placeholder
         | Exit     -> Environment.Exit(0); state
     | GameScreen     -> 
-        initialState |> App.Game.gameLoop// placeholder
+        Console.CursorVisible <- false
+        let result = state |> App.Game.gameLoop
+        Console.CursorVisible <- true
+        result
     | PauseMenu      -> state  // placeholder
     | GameOverScreen -> state  // placeholder
 

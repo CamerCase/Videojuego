@@ -39,3 +39,23 @@ let mostrar() =
     System.Console.ForegroundColor <- oldForeground
     System.Console.Clear()
     state.Commands.[state.CurSorSelection] |> fst
+
+let mostrarGameOver score =
+    Console.Clear()
+    Console.CursorVisible <- false
+
+    // Estado mínimo: solo necesita saber si sigue activo
+    let state = { 
+        initialMenuState with 
+            Commands = [| (NewGame, "Volver al menu") |]
+            CurSorSelection = 0
+    }
+
+    // Dibuja el mensaje fijo
+    displayMessage (Console.BufferWidth/2 - 5) (Console.BufferHeight/2 - 2) ConsoleColor.Red   "GAME OVER"
+    displayMessage (Console.BufferWidth/2 - 5) (Console.BufferHeight/2 - 1) ConsoleColor.White $"Score: {score}"
+
+    // Reutiliza el mismo loop del menú
+    let resultado = state |> miLoop
+    Console.Clear()
+    resultado.Commands.[0] |> fst  // devuelve NewGame siempre

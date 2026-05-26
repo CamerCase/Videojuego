@@ -67,6 +67,12 @@ let detectarColisionConEnemigo state =
             }
         else
             state
+
+let resetPlayer state =
+    if state.PlayerState = Hit && state.Lives > 0 then
+        { state with PlayerState = Alive; RedrawScreen = true }
+    else
+        state
 let resetEnemy state =
     if state.EnemyState = Hit && state.EnemyRespawnTick = 0 then
         { state with EnemyState = Alive; RedrawScreen = true }
@@ -130,23 +136,38 @@ let procesarTecladoAlien key state =
     else
         state
 
+let moverEnemigo state =
+    if state.EnemyState = Alive && state.Tick % 3 = 0 then
+        let nuevoY = state.EnemyY + state.EnemyDir
+        let nuevoDir =
+            if nuevoY <= 0 || nuevoY >= Console.BufferHeight - 1
+            then -state.EnemyDir
+            else state.EnemyDir
+        { state with EnemyY = nuevoY; EnemyDir = nuevoDir; RedrawScreen = true }
+    else
+        state
 
+let drawHUD state =
+    displayMessage 0 0 ConsoleColor.White $"Score: {state.Score}   Lives: {state.Lives}"
+    state
 let processKeyboard =
     createProcessKeyboard (fun k state -> procesarTecladoAlien k.Key state)
 let drawGame = [|
-    drawAlien; drawEnemy; drawMisiles; drawMisilesEnemigos
+    drawAlien; drawEnemy; drawMisiles; drawMisilesEnemigos; drawHUD
 |]
 let drawGameLoop = createRedrawScreen drawGame (fun s -> s.RedrawScreen) (fun s -> { s with RedrawScreen = false })
 
 let gamePipeline = [|
     updateTick                   // 1. avanzar el reloj
     processKeyboard              // 2. leer input del jugador
-    descontarCooldowns           // 3. bajar timers (cooldown, respawn)
+    descontarCooldowns
+    moverEnemigo                 // 3. bajar timers (cooldown, respawn)
     actualizarMisiles            // 4. mover misiles del jugador
     actualizarMisilesEnemigos    // 5. mover misiles del enemigo
     actualizarDisparoEnemigo     // 6. el enemigo dispara si toca
     detectarColisionConEnemigo   // 7. ¿misil del jugador golpeó al enemigo?
-    detectarColisionConPlayer    // 8. ¿misil enemigo golpeó al jugador?
+    detectarColisionConPlayer
+    resetPlayer                  // 8. ¿misil enemigo golpeó al jugador?
     resetEnemy                   // 9. ¿el enemigo debe respawnear?
     drawGameLoop                 // 10. dibujar SOLO si hubo cambios
 |]
