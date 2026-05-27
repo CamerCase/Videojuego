@@ -18,16 +18,16 @@ let route (state: State) : State =
         Console.CursorVisible <- false
         let result = state |> App.Game.gameLoop
         Console.CursorVisible <- true
-        result                                    // ← sale cuando Screen cambia a GameOverScreen
+        result                                    
 
     | GameOverScreen ->
-        App.Save.borrar()                              // ← borra el save
+        App.Save.borrar()                              
         App.Menu.mostrarGameOver state.Score |> ignore
         { initialState with Screen = MainMenu }
 
     | PauseMenu ->
         match App.Menu.mostrarPausa() with
-        | NewGame -> { state with Screen = GameScreen; RedrawScreen = true }  // continuar
+        | NewGame -> { state with Screen = GameScreen; RedrawScreen = true }  
         | Exit    ->
             App.Save.guardar state
             { initialState with Screen = MainMenu }
