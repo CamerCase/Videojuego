@@ -25,11 +25,9 @@ let guardar (state: State) : unit =
 
 let cargar (state: State) : State option =
     if File.Exists(savePath) then
-        try
-            let json = File.ReadAllText(savePath)
-            let data = JsonSerializer.Deserialize<SaveData>(json)
-            Some (applyToState data state)
-        with _ -> None
+        let json = File.ReadAllText(savePath)
+        JsonSerializer.Deserialize<SaveData>(json)
+        |> fun data -> Some (applyToState data state)
     else
         None
 
